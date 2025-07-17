@@ -1,0 +1,526 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<!-- Matomo Image Tracker-->
+<img referrerpolicy="no-referrer-when-downgrade" src="https://anl.genesilico.pl/matomo.php?idsite=2&amp;rec=1" style="border:0" alt="" />
+<!-- End Matomo -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Modomics - A Database of RNA Modifications</title>
+   <meta name="author" content="Andrea Cappannini">
+   <meta name="description" content="MODOMICS is a database of RNA modifications that provides comprehensive information concerning the chemical structures of modified ribonucleosides, their biosynthetic pathways, the location of modified residues in RNA sequences, and RNA-modifying enzymes.">
+   <meta name="keywords" content="RNA modifications, nucleotide modifications, RNA database">
+
+   
+ <link rel="stylesheet" href="/modomics/static/css/bootstrap.min.css" />
+ <link rel="stylesheet" href="/modomics/static/css/navbar-fixed-left.min.css">
+ <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css" />
+ <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.6/css/fixedColumns.bootstrap.min.css"/>
+ <!-- <link rel="stylesheet" href="/modomics/static/css/modomics.css"> UNUSED FOR NOW, if this removed remove also the css file-->
+
+ 
+ <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+ <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+ <script type="text/javascript" src="/modomics/static/js/bootstrap.min.js"></script>
+ <script type="text/javascript" src="/modomics/static/DataTables/datatables.min.js"></script>
+ <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
+
+
+
+  <style type="text/css">
+    @font-face {
+        font-family: 'HamburgerHeaven';
+        font-style: normal;
+        font-weight: bold;
+        src: local('HamburgerHeaven'), url('/modomics/static/fonts/ham.woff') format('woff');
+        }
+
+    @font-face {
+        font-family: 'BebasNeue-Regular';
+        font-style: normal;
+        font-weight: bold;
+        src: local('BebasNeue-Regular'), url('/modomics/static/fonts/BebasNeue-Regular.ttf') format('ttf');
+        }
+
+
+    .modtitle {
+    font-family: HamburgerHeaven;
+    font-size: -webkit-xxx-large;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left:35px;
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 20px;
+       }
+
+
+    .sectiontitle {
+      font-family: BebasNeue-Regular;
+      font-size: 40px;
+      text-align: center;
+      margin-bottom: 5px;
+      text-shadow: 1px 0px 1px #808080;
+    }
+
+
+    .navbar{
+        box-shadow: 0px 6px 6px -6px rgba(0,0,0,.5);
+        }
+
+    .navshadow {
+        box-shadow: 10px 0px 8px -6px rgba(0,0,0,.5);
+    }
+
+    #scrolltop {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+#scrolltop:hover {
+  background-color: #555;
+}
+  </style>
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" />
+<script src="/modomics/static/js/JSmol.min.js"></script>
+<script src="/modomics/static/js/j2s/core/package.js"></script>
+
+
+</head>
+
+<body>
+
+ <nav class="navbar navbar-inverse navbar-fixed-left navshadow">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand modtitle" href="/modomics/">Modomics</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><center><span style="color:#FFFFFF"> - </span></center></li>
+          <li><a href="/modomics/"><span class="glyphicon glyphicon-home" aria-hidden="True"></span>  Home</a></li>
+          <li><a href="/modomics/modifications">Modified residues</a></li>
+          <li><a href="/modomics/pathways">Pathways</a></li>
+          <li><a href="/modomics/reactions">Reactions</a></li>
+          <li><a href="/modomics/sequences/">RNA Sequences</a></li>
+          <li><a href="/modomics/rnafamilies/ "> Alignments</a></li>
+          <li><a href="/modomics/proteins">Proteins</a></li>
+          <li><a href="/modomics/diseases">Human Diseases</a></li>
+          <li><a href="/modomics/snornas">GuideRNAs</a></li>
+          <li><a href="/modomics/blocks">Building blocks</a></li>
+          <li><a href="/modomics/publications">Publications</a></li>
+          <li><a href="/modomics/supplementary_information/">Hints for the users</a></li>
+          <li><a href="/modomics/data_information/">Data Annotation</a></li>
+          <li><a href="/modomics/search/advance/"><span class="glyphicon glyphicon-search" aria-hidden="True"></span>  Search </a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+
+
+<!-- <nav class="navbar navbar-inverse bg-inverse"> -->
+
+   
+<nav class="navbar navbar-default">
+    <!--  <a class="navbar-brand" href="/modomics/">Modomics</a> -->
+    <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-left">
+            
+            <li><h1>5-formyluridine<small> (f5U)</small></h1></li>
+            
+            <br>
+
+            
+
+        </ul>
+    </div>
+</nav>
+
+ <!--  </nav> -->
+
+
+ <div  style="padding-top: 0px;padding-left: 30px; padding-right: 30px;">
+
+<br>
+<div class="row">
+    <div class="col-sm-6">
+        
+        <center>
+            <a href="/modomics/media/mod_images/f5U.png" data-toggle="lightbox" data-title="5-formyluridine">
+                <img id="image" class="img-fluid" src="/modomics/media/mod_images/f5U.png" alt="f5U" style="max-width:600px;" />
+            </a>
+        </center>
+        
+
+
+    </div>
+    <div class="col-sm-6">
+        
+        
+        <div id="jmol" align="center"><center>
+            <script type="text/javascript">
+                var jmolApplet0;
+                var use = "HTML5"
+
+                jmol_isReady = function(applet) {
+                    Jmol._getElement(applet, "appletdiv").style.border="" //1px solid black
+                }
+
+                script = 'h2oOn=true;set animframecallback "jmolscript:if (!selectionHalos) {select model=_modelNumber}";'
+                    +'set errorCallback "myCallback";'
+                    +'set defaultloadscript "isDssp = false;set defaultVDW babel;if(!h2oOn){display !water}";'
+                    +'set zoomlarge true;set echo top left;echo loading ...;refresh;'
+                    +'load /modomics/media/3d_structures/1_3D.sdf;set echo top center;'
+                    +'set disablePopupMenu true'
+
+                var Info = {
+                    height: '400',
+                    width: '400',
+                    spinRateX: 0.2,
+                    spinRateY: 0.5,
+                    spinFPS: 20,
+                    spin:true,
+                    debug: false,
+                    color: "white",
+                    addSelectionOptions: false,
+                    serverURL: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+                    use: "HTML5",
+                    j2sPath: "/modomics/static/js/j2s",
+                    reagdyFunction: jmol_isReady,
+                    script: script,
+                    disableJ2SLoadMonitor: true,
+                    disableInitialConsole: true
+                }
+            </script>
+
+            <script type="text/javascript">
+                jmolApplet0 = Jmol.getApplet("jmolApplet0", Info)
+            </script>
+        </center>
+        </div>
+        <span>The molecule is shown in a ball-and-stick representation with the
+following colors for atoms : </span>
+        <div>
+            <span> <span style="color: white; background-color: silver;">⬤ </span> Hydrogen (H): white</span>
+            <span> <span style="color: gray;">⬤ </span> Carbon (C): gray   </span>
+            <span> <span style="color: red;">⬤ </span> Oxygen (O): red    </span>
+            <span> <span style="color: orange;">⬤ </span> Phosphorus (P): orange</span>
+            <span> <span style="color: blue;">⬤ </span> Nitrogen (N): blue</span>
+            <span> <span style="color: #FFD700;">⬤ </span> Selenium (Se): gold</span>
+            <span> <span style="color: yellow;">⬤ </span> Sulfur (S): yellow </span>
+        </div>
+        
+
+        
+
+    </div>
+
+</div>
+
+<!-- SUMMARY SECTION -->
+
+<h3>Summary</h3>
+<table id="table" class="table table-bordered" cellspacing="0" width="80%">
+    <tbody>
+    <tr><td><b>Full name</b></td><td>5-formyluridine</td></tr>
+    
+    <tr><td><b>Short name</b></td><td>f5U</td></tr>
+    
+    <tr><td><b>MODOMICS code new</b></td><td></td></tr>
+    
+    <tr><td><b>MODOMICS code</b></td><td>71U</td></tr>
+    
+    <tr><td><b>Nature of the modified residue</b></td><td>Natural</td></tr>
+    
+    <tr><td><b>RNAMods code</b></td><td>⊂</td></tr>
+    
+    <tr><td><b>Residue unique ID</b></td><td>1</td></tr>
+    
+    
+    
+    
+    
+    
+    
+    
+
+</table>
+<br>
+<h3>Chemical information</h3>
+<table id="table" class="table table-bordered" cellspacing="0" width="80%">
+    <tr><td><b>Sum formula</b></td><td>C10H12N2O7</td></tr>
+    <tr><td><b>Type of moiety</b></td><td>nucleoside</tr>
+    
+    
+    <tr><td><b>SMILES</b></td><td>OC[C@@H]1[C@@H](O)[C@@H](O)[C@H](n2c(=O)[nH]c(=O)c(C=O)c2)O1</td></tr>
+    <!--<tr id="smile_simple_tr"><td><b>SMILES (no stereochemical information)</b></td><td id="smile_simple">OC[C@@H]1[C@@H](O)[C@@H](O)[C@H](n2c(=O)[nH]c(=O)c(C=O)c2)O1</td></tr>-->
+    <tr><td><b>logP</b></td><td>-3.0394</td></tr>
+    <tr><td><b>TPSA</b></td><td>141.85</td></tr>
+    <tr><td><b>Number of atoms</b></td><td>19</td></tr>
+    <tr><td><b>Number of Hydrogen Bond Acceptors 1 (HBA1)</b></td><td>7</td></tr>
+    <tr><td><b>Number of Hydrogen Bond Acceptors 2 (HBA2)</b></td><td>8</td></tr>
+    <tr><td><b>Number of Hydrogen Bond Donors (HBD)</b></td><td>4</td></tr>
+    
+    <tr>
+        <td><b>PDB  no exac match , link to the most similar ligand </b></td>
+        <td><a href="https://www.rcsb.org/ligand/38T">38T</a></td>
+    </tr>
+    
+    
+    <tr>
+        <td><b>HMDB (Human Metabolome Database)  no exact match, link to the most similar ligand </b></td>
+        <td><a href="https://www.rcsb.org/ligand/None">None</a></td>
+    </tr>
+    
+    <tr><td><b>InChI</b></td><td>InChI=1S/C10H12N2O7/c13-2-4-1-12(10(18)11-8(4)17)9-7(16)6(15)5(3-14)19-9/h1-2,5-7,9,14-16H,3H2,(H,11,17,18)/t5-,6-,7-,9-/m1/s1</td></tr>
+    <tr><td><b>InChIKey</b></td><td>MZBPLEJIMYNQQI-JXOAFFINSA-N</td></tr>
+    
+    <tr><td><b>Search the molecule in external databases</b></td><td>
+        <a href="https://www.ebi.ac.uk/chembl/g/#search_results/compounds/query=MZBPLEJIMYNQQI-JXOAFFINSA-N" target="_blank" data-toggle="tooltip" data-placement="top" title="ChEMBL is a manually curated database of bioactive molecules with drug-like properties. It brings together chemical, bioactivity and genomic data to aid the translation of genomic information into effective new drugs.">ChEMBL</a>&nbsp;
+        <a href="https://chemagora.jrc.ec.europa.eu/chemagora/inchikey/MZBPLEJIMYNQQI-JXOAFFINSA-N" target="_blank" data-toggle="tooltip" data-placement="top" title="search into publicly available databases containing chemical, physical and toxicological information">ChemAgora</a>&nbsp;
+        <a href="https://www.ebi.ac.uk/chembl/g/#search_results/compounds/query=MZBPLEJIMYNQQI-JXOAFFINSA-N" target="_blank" data-toggle="tooltip" data-placement="top" title="(Chemical Entities of Biological Interest) is a freely available dictionary of molecular entities focused on ‘small’ chemical compounds.">ChEBI</a>&nbsp;
+        <a href="https://www.ncbi.nlm.nih.gov/pccompound/?db=pccompound&term=MZBPLEJIMYNQQI-JXOAFFINSA-N[InChIKey]" target="_blank"  data-toggle="tooltip" data-placement="top" title="PubChem Compound Database contains validated chemical depiction information provided to describe substances in PubChem Substance.">PubChem Compound Database</a>&nbsp;
+        <a href="http://ligand-expo.rcsb.org/pyapps/ldHandler.py?formid=cc-index-search&target=MZBPLEJIMYNQQI-JXOAFFINSA-N&operation=inchikey-substring" target="_blank" data-toggle="tooltip" data-placement="top" title="Ligand Expo provides chemical and structural information about small molecules within the structure entries of the Protein Data Bank.">Ligand Expo</a>&nbsp;
+        <a href="http://www.chemspider.com/Search.aspx?q=InChIKey=MZBPLEJIMYNQQI-JXOAFFINSA-N" target="_blank" data-toggle="tooltip" data-placement="top" title="ChemSpider is a free chemical structure database providing fast text and structure search access to over 100 million structures from hundreds of data sources; provided by Royal Society of Chemistry">ChemSpider</a>&nbsp;
+        <a href="https://patentscope.wipo.int/search/en/result.jsf?inchikey=MZBPLEJIMYNQQI-JXOAFFINSA-N" target="_blank" data-toggle="tooltip" data-placement="top" title="Using WIPO PATENTSCOPE you can search 97 million patent documents including 4.1 million published international patent applications (PCT).">WIPO</a>&nbsp;
+    </td></tr>
+    
+    
+    
+</table>
+<p><small>
+    <sup>*</sup> Chemical properties calculated with Open Babel - O'Boyle et al. Open Babel: An open chemical toolbox. J Cheminform 3, 33 (2011) (<a href="https://doi.org/10.1186/1758-2946-3-33">link</a>)
+</small></p>
+
+<br>
+
+<h3>Download Structures</h3>
+<table id="table" class="table table-bordered" cellspacing="0" width="80%">
+    <tr><td><b>2D</b></td><td>&nbsp;&nbsp;
+        <a href="/modomics/media/mod_images/f5U.png">.png</a>
+        <a href="/modomics/media/2d_structures/1_2D.mol">.mol</a>
+        <a href="/modomics/media/2d_structures/1_2D.mol2">.mol2</a>
+        <a href="/modomics/media/2d_structures/1_2D.sdf">.sdf</a>
+        <a href="/modomics/media/2d_structures/1_2D.pdb">.pdb</a>
+        <a href="/modomics/media/2d_structures/1_2D.smi">.smi</a>
+    </td></tr>
+    <tr><td><b>3D</b></td><td>&nbsp;&nbsp;
+        <a href="/modomics/media/3d_structures/1_3D.mol">.mol</a>
+        <a href="/modomics/media/3d_structures/1_3D.mol2">.mol2</a>
+        <a href="/modomics/media/3d_structures/1_3D.sdf">.sdf</a>
+        <a href="/modomics/media/3d_structures/1_3D.pdb">.pdb</a>
+    </td></tr>
+</table>
+<br>
+
+
+<h3>Tautomers</h3>
+<table id="table" class="table table-bordered" cellspacing="0" width="80%">
+    
+    <tr><td data-toggle="tooltip" data-placement="top" title="Smiles of the tautomers"><b>Tautomers SMILES</b></td><td>
+        <div style="width:100%; max-height:100px; overflow:auto">
+            <small>
+                
+                OCC1C(O)C(O)C(n2c(=O)[nH]c(=O)c(C=O)c2)O1	f5U tautomer #0<br>
+                
+                OCC1C(O)C(O)C(n2c(O)nc(=O)c(C=O)c2)O1	f5U tautomer #1<br>
+                
+                OCC1C(O)C(O)C(n2c(=O)nc(O)c(C=O)c2)O1	f5U tautomer #2<br>
+                
+                <br>
+                
+            </small>
+        </div>
+    </td></tr>
+    
+    
+    <tr><td><b>Tautomer image</b></td><td>
+        <a href="/modomics/media/tautomers/f5U.png" data-toggle="lightbox" data-title="5-formyluridine">Show Image</a>
+    </td>
+        
+</table>
+
+
+<br>
+
+
+<h3>Predicted CYP Metabolic Sites</h3>
+<table class="table table-bordered" cellspacing="0" width="80%" style="align: center">
+    <tbody>
+    <tr>
+        <th>CYP3A4</th>
+        <th>CYP2D6</th>
+        <th>CYP2C9</th>
+    <tr>
+    <tr>
+        <td>
+            <a href="/modomics/media/CYPMetabolicSites/f5U_w0Xj4gi.png" data-toggle="lightbox" data-title="5-formyluridine">
+                <img id="image" class="img-fluid" src="/modomics/media/CYPMetabolicSites/f5U_w0Xj4gi.png" alt="f5U" style="max-width:200px;" />
+            </a>
+        </td>
+        <td>
+            <a href="/modomics/media/CYPMetabolicSites/f5U_erE5oNc.png" data-toggle="lightbox" data-title="5-formyluridine">
+                <img id="image" class="img-fluid" src="/modomics/media/CYPMetabolicSites/f5U_erE5oNc.png" alt="f5U" style="max-width:200px;" />
+            </a>
+        </td>
+        <td>
+            <a href="/modomics/media/CYPMetabolicSites/f5U.png" data-toggle="lightbox" data-title="5-formyluridine">
+                <img id="image" class="img-fluid" src="/modomics/media/CYPMetabolicSites/f5U.png" alt="f5U" style="max-width:200px;" />
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p><small>
+    <sup>*</sup> CYP Metabolic sites predicted with SMARTCyp. SMARTCyp is a method for prediction of which sites in a molecule that are most liable to metabolism by Cytochrome P450. It has been shown to be applicable to metabolism by the isoforms 1A2, 2A6, 2B6, 2C8, 2C19, 2E1, and 3A4 (CYP3A4), and specific models for the isoform 2C9 (CYP2C9) and isoform 2D6 (CYP2D6). CYP3A4, CYP2D6, and CYP2C9 are the three of the most important enzymes in drug metabolism since they are involved in the metabolism of more than half of the drugs used today. The three top-ranked atoms are highlighted. See: <a href="https://smartcyp.sund.ku.dk" target="_blank">SmartCYP</a> and <a href="https://smartcyp.sund.ku.dk/background_smartcyp" target="_blank">SmartCYP - background</a>; Patrik Rydberg, David E. Gloriam, Lars Olsen, The SMARTCyp cytochrome P450 metabolism prediction server, Bioinformatics, Volume 26, Issue 23, 1 December 2010, Pages 2988–2989 (<a href="https://doi.org/10.1093/bioinformatics/btq584" target="_blank">link</a>)
+</small></p>
+<br>
+
+
+
+<h3>LC-MS Information</h3>
+<table class="table table-bordered" cellspacing="0" width="80%">
+    <tbody>
+    <tr><td><b>Monoisotopic mass</b></td><td>272.0645</td></tr>
+    <tr><td><b>Average mass</b></td><td>272.211</td></tr>
+    <tr><td><b>[M+H]<sup>+</sup></b></td><td> not available </td></tr>
+    <tr><td><b>Product ions</b></td><td> not available</td></tr>
+
+    <tr><td><b>Normalized LC elution time<sup> *</sup></b></td><td> not available </td></tr>
+    <tr><td><b>LC elution order/characteristics</b></td><td> not available </td></tr>
+
+    </td></tr>
+
+
+    </td></tr>
+
+    </td></tr>
+
+    </tbody>
+</table>
+<p><sup>*</sup> normalized to guanosine (G), measured with a RP C-18 column with acetonitrile/ammonium acetate as mobile phase.</p>
+
+
+
+<!-- End added LC paper session.-->
+
+
+
+<!-- End LC/MS section -->
+
+
+
+
+<!-- CHEMICAL TYPES BLOCK -->
+
+<h3>Chemical groups contained</h3>
+<table  class="table table-bordered" cellspacing="0" width="50%">
+    <thead>
+    <tr><th>Type</th><th>Subtype</th></tr>
+    </thead>
+    <tbody>
+    
+    <tr><td>other</td><td>formyl</td></tr>
+    
+    </tbody>
+</table>
+
+
+<!-- REACTION FROM BLOCK -->
+
+
+<!-- REACTION FROM BLOCK -->
+
+
+
+<!-- PAPERS BLOCK -->
+
+
+
+
+
+
+
+
+
+<p><em>Last modification of this entry: Sept. 29, 2021</em></p>
+
+
+
+
+</div>
+
+<br>
+<button id="scrolltop"  onclick="topFunction()">Scroll Up</button>
+<script type="text/javascript" charset="utf-8">
+
+        var mybutton = document.getElementById("scrolltop");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function() {scrollFunction()};
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+
+</script>
+
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js" type="text/javascript"></script>
+
+<!-- uncomment to activate lightbox. problem, it is overlayed by jsmol
+<script type="text/javascript">
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+                event.preventDefault();
+                $(this).ekkoLightbox();
+            });
+</script>
+-->
+
+<script type="text/javascript">
+    // generate simple smile codes automatically, by replacing the innerHTML of smile_simple with a manipulated text string.
+    var str= document.getElementById("smile_simple").innerHTML;
+    var res = str.split("[C@@H]").join("C");
+    res = res.split("[C@H]").join("C");
+    document.getElementById("smile_simple").innerHTML = res;
+    if (str == res) {
+        x = document.getElementById("smile_simple_tr");
+        x.style.display = "none";
+    }
+</script>
+
+
+</body>
+</html>

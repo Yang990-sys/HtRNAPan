@@ -1,0 +1,2169 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<!-- Matomo Image Tracker-->
+<img referrerpolicy="no-referrer-when-downgrade" src="https://anl.genesilico.pl/matomo.php?idsite=2&amp;rec=1" style="border:0" alt="" />
+<!-- End Matomo -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Modomics - A Database of RNA Modifications</title>
+   <meta name="author" content="Andrea Cappannini">
+   <meta name="description" content="MODOMICS is a database of RNA modifications that provides comprehensive information concerning the chemical structures of modified ribonucleosides, their biosynthetic pathways, the location of modified residues in RNA sequences, and RNA-modifying enzymes.">
+   <meta name="keywords" content="RNA modifications, nucleotide modifications, RNA database">
+
+   
+ <link rel="stylesheet" href="/modomics/static/css/bootstrap.min.css" />
+ <link rel="stylesheet" href="/modomics/static/css/navbar-fixed-left.min.css">
+ <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css" />
+ <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.6/css/fixedColumns.bootstrap.min.css"/>
+ <!-- <link rel="stylesheet" href="/modomics/static/css/modomics.css"> UNUSED FOR NOW, if this removed remove also the css file-->
+
+ 
+ <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+ <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+ <script type="text/javascript" src="/modomics/static/js/bootstrap.min.js"></script>
+ <script type="text/javascript" src="/modomics/static/DataTables/datatables.min.js"></script>
+ <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
+
+
+
+  <style type="text/css">
+    @font-face {
+        font-family: 'HamburgerHeaven';
+        font-style: normal;
+        font-weight: bold;
+        src: local('HamburgerHeaven'), url('/modomics/static/fonts/ham.woff') format('woff');
+        }
+
+    @font-face {
+        font-family: 'BebasNeue-Regular';
+        font-style: normal;
+        font-weight: bold;
+        src: local('BebasNeue-Regular'), url('/modomics/static/fonts/BebasNeue-Regular.ttf') format('ttf');
+        }
+
+
+    .modtitle {
+    font-family: HamburgerHeaven;
+    font-size: -webkit-xxx-large;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left:35px;
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 20px;
+       }
+
+
+    .sectiontitle {
+      font-family: BebasNeue-Regular;
+      font-size: 40px;
+      text-align: center;
+      margin-bottom: 5px;
+      text-shadow: 1px 0px 1px #808080;
+    }
+
+
+    .navbar{
+        box-shadow: 0px 6px 6px -6px rgba(0,0,0,.5);
+        }
+
+    .navshadow {
+        box-shadow: 10px 0px 8px -6px rgba(0,0,0,.5);
+    }
+
+    #scrolltop {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+#scrolltop:hover {
+  background-color: #555;
+}
+  </style>
+  
+<!--Importing jQuery-->
+<script
+        src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous">
+</script>
+<!--Importing jMOL-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.0.0/3Dmol-min.min.js">
+
+</script>
+<!--Importing CloudTables-->
+<link rel="stylesheet" type="text/css" href="/modomics/static/DataTables/datatables.min.css"/>
+<script type="text/javascript" src="/modomics/static/DataTables/datatables.min.js">
+</script>
+<!-- Molstar -->
+<link rel="stylesheet" type="text/css" href="https://www.ebi.ac.uk/pdbe/pdb-component-library/css/pdbe-molstar-light-1.2.1.css">
+<script type="text/javascript" src="https://www.ebi.ac.uk/pdbe/pdb-component-library/js/pdbe-molstar-plugin-1.2.1.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="https://www.ebi.ac.uk/pdbe/pdb-component-library/css/pdbe-molstar-3.1.2.css">
+    <script type="text/javascript" src="https://www.ebi.ac.uk/pdbe/pdb-component-library/js/pdbe-molstar-plugin-3.1.2.js"></script>-->
+<!-- Feature Viewer -->
+<link rel="stylesheet" type="text/css" href="/modomics/static/css/feature_viewer.css">
+<link rel="stylesheet" type="text/css" href="/modomics/static/css/index_feature_viewer.css">
+<link rel="stylesheet" type="text/css" href="/modomics/static/css/media_query_mol_star.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.css">
+    <!-------DAMN STAIC------>
+<script type="text/javascript" src="/modomics/static/js/modified_feature_viewer.js"></script>
+<style>
+    span.sequence, rect {
+                cursor: pointer;
+        }
+</style>
+
+
+
+</head>
+
+<body>
+
+ <nav class="navbar navbar-inverse navbar-fixed-left navshadow">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand modtitle" href="/modomics/">Modomics</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><center><span style="color:#FFFFFF"> - </span></center></li>
+          <li><a href="/modomics/"><span class="glyphicon glyphicon-home" aria-hidden="True"></span>  Home</a></li>
+          <li><a href="/modomics/modifications">Modified residues</a></li>
+          <li><a href="/modomics/pathways">Pathways</a></li>
+          <li><a href="/modomics/reactions">Reactions</a></li>
+          <li><a href="/modomics/sequences/">RNA Sequences</a></li>
+          <li><a href="/modomics/rnafamilies/ "> Alignments</a></li>
+          <li><a href="/modomics/proteins">Proteins</a></li>
+          <li><a href="/modomics/diseases">Human Diseases</a></li>
+          <li><a href="/modomics/snornas">GuideRNAs</a></li>
+          <li><a href="/modomics/blocks">Building blocks</a></li>
+          <li><a href="/modomics/publications">Publications</a></li>
+          <li><a href="/modomics/supplementary_information/">Hints for the users</a></li>
+          <li><a href="/modomics/data_information/">Data Annotation</a></li>
+          <li><a href="/modomics/search/advance/"><span class="glyphicon glyphicon-search" aria-hidden="True"></span>  Search </a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+
+
+<!-- <nav class="navbar navbar-inverse bg-inverse"> -->
+
+   
+
+
+
+<nav class="navbar navbar-default">
+    <!--  <a class="navbar-brand" href="/modomics/">Modomics</a> -->
+    <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-left">
+
+            <!--This section sets the title at the top of the page-->
+
+            <li><h2>Sua5  from <em>Saccharomyces cerevisiae</em>  - protein summary.
+            </h2></li>
+
+        </ul>
+    </div>
+    <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-right">
+            
+            <a href=http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Proteins&amp;PROGRAM=blastp&amp;BLAST_PROGRAMS=blastp&amp;QUERY=417826&amp;LINK_LOC=protein&amp;PAGE_TYPE=BlastSearch target=_blank> <button type="button" class="btn btn-dark">Send to NCBI Blast</button></a></td>
+            
+        </ul>
+
+    </div>
+</nav>
+
+ <!--  </nav> -->
+
+
+ <div  style="padding-top: 0px;padding-left: 30px; padding-right: 30px;">
+
+</br>
+<h3>ID Card:</h3>
+<div  class="row">
+    <div class="col-md-12">
+        <table id="table" class="table table-bordered" cellspacing="0" width="100%">
+            <tr>
+                <th>Full name: </th>
+                <td>tRNA threonylcarbamoyladenosine biosynthesis protein SUA5</td>
+            </tr>
+            
+            
+            <tr>
+                <th>GI: </th>
+                <td>
+                    <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=protein&amp;amp;cmd=search&amp;amp;term=417826"
+                       target="_blank" title="View on NCBI site">417826
+                    </a>
+                </td>
+            </tr>
+            
+            
+            <tr>
+                <th>Orf: </th>
+                <td>G1660</td>
+            </tr>
+            
+            
+            <tr>
+                <th>COG: </th>
+                <td><a href="https://www.ncbi.nlm.nih.gov/research/cog/cog/COG0009"
+                       target="_blank"
+                       title="View on COG site">COG0009 </a></td>
+            </tr>
+            
+            
+            <tr>
+                <th>UniProt: </th>
+                <td><a href="http://www.uniprot.org/uniprot/P32579"
+                       target="_blank"
+                       title="View on UniProt site">P32579</a></td>
+            </tr>
+            
+            
+            
+            <tr>
+                <th>Alpha Fold Predicted Structure: </th>
+                <td>
+                    <a href="https://www.alphafold.ebi.ac.uk/entry/P32579"target="_blank" title="View on Alpha-Fold site">AF-P32579-F1</a></td>
+                </td>
+            </tr>
+            
+            
+            <tr>
+                <th>Complex: </th>
+                <td>EKC/KEOPS</td>
+            </tr>
+            
+            
+            <tr>
+                <th>Enzyme type: </th>
+                <td>threonylcarbamoyladenosine synthetase</td>
+            </tr>
+            
+                <tr>
+                    <th> Position of modification - modification: </th>
+                    
+                        <td>
+                            <font style="color:purple;">t</font>:37 - t6A <br />
+                            
+                        </td>
+                </tr>
+                    
+            
+            
+        </table><br/>
+
+    </div> <!-- close grid -->
+    <div class="col-md-2"></div>
+</div> <!-- close row -->
+
+<br>
+
+
+
+
+<br>
+
+<h3>Protein sequence:</h3>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <font face="Courier" size="2">
+                    <pre>MYLGRHFLAMTSKALFDTKILKVNPLSIIFSPDAHIDGSLPTITDPETEAALVEAARIIRDTDETVAFPTETVYGLGGSALNDNSVLSIYRAKNRPSDNPLITHVSSIDQLNRKVFNQPHLSGTSLFDNIPSIYRPLISSLWPGPLTILLPVPSSEHSALSKLTTADQPTFAVRIPANPVARALIALSDTPIAAPSANASTRPSPTLASHVYHDLKDKIPIILDGGACKVGVESTVVDGLCNPPTLLRPGGFTYEEIVKLGGEAWSLCKVENKKTVEKGEKVRTPGMKYRHYSPSAKVVLLVPHCEGDGILKGVDRMERLKRLIETELKANSNIKKIAILTSLKLRDSDLQSKIFNEPDFSSKTFIIERLGQSGEEIQTNLFAALRKVDENDKVDLIFVEGINEEGEGLAVMNRLRKAAANNCIQF</pre>
+                </font>
+                <br/>
+            </div>
+        </div>
+        
+
+<h3>Comments: </h3>
+<p style="text-align: justify">Sua5 is required for the formation of threonylcarbamoyl group on the adenosine
+at position 37(t6A37) in almost all tRNAs decoding ANN codons (<a href="https://pubmed.ncbi.nlm.nih.gov/29650678/" target="_blank" style="color:#3476f9;text-decoration:none;">
+Pichard-Kostuch et al. 2018</a>). It likely catalyzes
+the condensation of L-threonine bicarbonate (HCO<sup>-</sup><sub>3</sub>) and ATP
+to give threonylcarbamoyl-AMP (TC-AMP).
+
+KEOPS/EKC complex is a tRNA modification complex involved in the biosynthesis of 
+N<sup>6</sup>-threonylcarbamoyl adenosine (t<sup>6</sup>) (<a href="https://pubmed.ncbi.nlm.nih.gov/29650678/" 
+target="_blank" style="color:#3476f9;text-decoration:none;">
+Wan et al. 2017</a>). 
+In arachaea and eukaryotes, KEOPS/EKC is composed of OSGEP/Kae1, PRPK/Bud32, 
+TPRKB/Cgi121, and LAGE3/PCC1.Fungi contains an additional subbunit, Gon7, whose orthologues
+in other species, if present, remain unidentified.
+
+Together with Sua5, they catalyze the <i>in vivo</i> formation of t<sup>6</sup>.
+Structurally,Sua5 displays a YrdC-like domain between A50 and G250.
+The yrdC-like domain is typically an ~185-residue module which can be found in stand-alone form
+(<a href="https://prosite.expasy.org/PDOC00883" 
+target="_blank" style="color:#3476f9;text-decoration:none;">
+YrdC-like</a>) , 
+or in association with other domains such as the acylphosphatase-like domain which
+catalyzes the hydrolysis of various acyl phosphate carboxyl-phosphate bonds such as 
+carbamyl phosphate, succinyl phosphate, 1,3-diphosphoglycerate, etc (<a href="https://prosite.expasy.org/PDOC00136" 
+target="_blank" style="color:#3476f9;text-decoration:none;">
+YrdC-like</a>).The yrdC-like domain 
+features a large concave surface on one side that exhibits a positive electrostatic potential. 
+The dimension of this depression, its curvature, and the fact that conserved basic amino acids are 
+located at its floor suggest that it may be a nucleic acid binding domain.</p><br/><br />
+<br>
+
+    
+
+        <table id="tableact" class="table" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+
+                <th>Reaction</th>
+                <th>Substrate</th>
+                <th>SubstrateType</th>
+                <th>Position</th>
+                <th>(Anti)Codon</th>
+                <th>Modified (Anti)Codon</th>
+                <th>Amino Acid Change</th>
+                <th>Transcript Name</th>
+                <th>Transcript Region</th>
+                <th>Cellular Localization</th>
+               <!-- <th>Cell type</th>-->
+                <th>References</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td>tRNA<sub>ANN</sub></td>
+                <td>anticodon-loop</td>
+                <td>Cytoplasm, Nucleus</td>
+                <!--<td>Eukaryotic</td>-->
+                <td>
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/19287007">
+                        19287007&nbsp&nbsp&nbsp</a>
+                    
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>GUU</td>
+                <td>GUU</td>
+                <td> </td>
+                <td>tRNA<sup>Asn</sup><sub>GUU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>IAU</td>
+                <td>IAU</td>
+                <td> </td>
+                <td>tRNA<sup>Ile</sup><sub>IAU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>PAP</td>
+                <td>PAP</td>
+                <td> </td>
+                <td>tRNA<sup>Ile</sup><sub>PAP</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>GAU</td>
+                <td>GAU</td>
+                <td> </td>
+                <td>tRNA<sup>Ile</sup><sub>GAU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>CAU</td>
+                <td>CAU</td>
+                <td> </td>
+                <td>tRNA<sup>Met</sup><sub>CAU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>CAU</td>
+                <td>CAU</td>
+                <td> </td>
+                <td>tRNA<sup>Met</sup><sub>CAU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>UCU</td>
+                <td>UCU</td>
+                <td> </td>
+                <td>tRNA<sup>Arg</sup><sub>UCU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>NCU</td>
+                <td>NCU</td>
+                <td> </td>
+                <td>tRNA<sup>Arg</sup><sub>NCU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>IGU</td>
+                <td>IGU</td>
+                <td> </td>
+                <td>tRNA<sup>Thr</sup><sub>IGU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>CUU</td>
+                <td>CUU</td>
+                <td> </td>
+                <td>tRNA<sup>Lys</sup><sub>CUU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>3UU</td>
+                <td>3UU</td>
+                <td> </td>
+                <td>tRNA<sup>Lys</sup><sub>3UU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            <tr>
+
+                <td>
+                    
+                    <!-- add link after implementation of reaction -->
+                    <a href="/modomics/reaction/A:t6A/"
+                       title="Show details of this reaction">
+                        A:t6A</a>
+                    
+                </td>
+                 <td>RNA</td>
+                
+                <td>tRNA</td>
+                
+                <td>37</td>
+                <td>$UU</td>
+                <td>$UU</td>
+                <td> </td>
+                <td>tRNA<sup>Lys</sup><sub>$UU</sub></td>
+                <td>Anticodon-loop</td>
+                <td>Cytoplasm</td>
+                <!--<td>S.cerevisiae</td>-->
+                <td>
+                </td>
+
+            </tr>
+            
+            </tbody>
+        
+    
+</table>
+
+<script>
+    $(document).ready( function () {
+        $('#tableact').DataTable({
+
+
+            "fixedHeader": {
+                header: true,
+            },
+
+            "fixedColumns": {
+                leftColumns: 1,
+            },
+            "processing": true,
+            "scrollX": true,
+            "scrollY": "400px",
+            "scrollCollapse": true,
+            "paging": false,
+
+            "dom": 'Bfrtip',
+            "buttons": [
+                'csv', 'print',
+            ],
+
+
+        });
+    } );
+</script>
+
+
+<br>
+<h3>Alpha Fold Predicted Structure:</h3>
+<br>
+<br>
+<br>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .msp-plugin ::-webkit-scrollbar-thumb {
+        background-color: #474748 !important;
+    }
+    #viewerSection {
+        margin: 120px 0 0 50px;
+        margin-left: 100px;
+        padding-right: 100px;
+    }
+    #alpha_Viewer{
+        float:center;
+        width:100%;
+        height: 800px;
+        position:relative;
+
+
+    }
+
+
+</style>
+
+
+<div id = "viewerSection" class="container-fluid" style="padding-left:50px">
+    <!-- Molstar container -->
+    <div id="alpha_Viewer"> </div>
+</div>
+<br>
+<br>
+
+<h3>Clear Selection and Reset Camera</h3>
+<div class="row">
+    <div class="col-md-6">
+        <button class="clear_selection btn btn-primary" onclick="viewerInstance.visual.clearSelection()">Clear Selection</button>
+        <button class="reset_camera btn btn-primary" onclick="viewerInstance.visual.reset({ camera: true })"> Reset Camera</button>
+    </div>
+</div>
+
+<h3>Protein sequence:</h3>
+
+<div class="row mb-6 ml-4 mr-4 mt-6">
+    <div class="col-md-12">
+        <font face="Courier" size="2">
+            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 1 class=sequence>M</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 2 class=sequence>Y</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 3 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 4 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 5 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 6 class=sequence>H</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 7 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 8 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 9 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 10 class=sequence>M</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 11 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 12 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 13 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 14 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 15 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 16 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 17 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 18 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 19 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 20 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 21 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 22 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 23 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 24 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 25 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 26 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 27 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 28 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 29 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 30 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 31 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 32 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 33 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 34 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 35 class=sequence>H</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 36 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 37 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 38 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 39 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 40 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 41 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 42 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 43 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 44 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 45 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 46 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 47 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 48 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 49 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 50 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 51 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 52 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 53 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 54 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 55 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 56 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 57 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 58 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 59 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 60 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 61 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 62 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 63 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 64 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 65 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 66 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 67 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 68 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 69 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 70 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 71 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 72 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 73 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 74 class=sequence>Y</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 75 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 76 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 77 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 78 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 79 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 80 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 81 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 82 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 83 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 84 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 85 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 86 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 87 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 88 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 89 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 90 class=sequence>Y</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 91 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 92 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 93 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 94 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 95 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 96 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 97 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 98 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 99 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 100 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 101 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 102 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 103 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 104 class=sequence>H</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 105 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 106 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 107 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 108 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 109 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 110 class=sequence>Q</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 111 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 112 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 113 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 114 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 115 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 116 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 117 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 118 class=sequence>Q</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 119 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 120 class=sequence>H</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 121 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 122 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 123 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 124 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 125 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 126 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 127 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 128 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 129 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 130 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 131 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 132 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 133 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 134 class=sequence>Y</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 135 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 136 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 137 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 138 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 139 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 140 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 141 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 142 class=sequence>W</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 143 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 144 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 145 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 146 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 147 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 148 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 149 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 150 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 151 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 152 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 153 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 154 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 155 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 156 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 157 class=sequence>H</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 158 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 159 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 160 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 161 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 162 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 163 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 164 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 165 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 166 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 167 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 168 class=sequence>Q</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 169 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 170 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 171 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 172 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 173 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 174 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 175 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 176 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 177 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 178 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 179 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 180 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 181 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 182 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 183 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 184 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 185 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 186 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 187 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 188 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 189 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 190 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 191 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 192 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 193 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 194 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 195 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 196 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 197 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 198 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 199 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 200 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 201 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 202 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 203 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 204 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 205 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 206 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 207 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 208 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 209 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 210 class=sequence>H</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 211 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 212 class=sequence>Y</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 213 class=sequence>H</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 214 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 215 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 216 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 217 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 218 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 219 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 220 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 221 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 222 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 223 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 224 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 225 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 226 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 227 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 228 class=sequence>C</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 229 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 230 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 231 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 232 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 233 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 234 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 235 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 236 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 237 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 238 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 239 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 240 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 241 class=sequence>C</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 242 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 243 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 244 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 245 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 246 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 247 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 248 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 249 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 250 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 251 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 252 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 253 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 254 class=sequence>Y</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 255 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 256 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 257 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 258 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 259 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 260 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 261 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 262 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 263 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 264 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 265 class=sequence>W</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 266 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 267 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 268 class=sequence>C</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 269 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 270 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 271 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 272 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 273 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 274 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 275 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 276 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 277 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 278 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 279 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 280 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 281 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 282 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 283 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 284 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 285 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 286 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 287 class=sequence>M</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 288 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 289 class=sequence>Y</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 290 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 291 class=sequence>H</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 292 class=sequence>Y</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 293 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 294 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 295 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 296 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 297 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 298 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 299 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 300 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 301 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 302 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 303 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 304 class=sequence>H</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 305 class=sequence>C</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 306 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 307 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 308 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 309 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 310 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 311 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 312 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 313 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 314 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 315 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 316 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 317 class=sequence>M</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 318 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 319 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 320 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 321 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 322 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 323 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 324 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 325 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 326 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 327 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 328 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 329 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 330 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 331 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 332 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 333 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 334 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 335 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 336 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 337 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 338 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 339 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 340 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 341 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 342 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 343 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 344 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 345 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 346 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 347 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 348 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 349 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 350 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 351 class=sequence>Q</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 352 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 353 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 354 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 355 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 356 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 357 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 358 class=sequence>P</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 359 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 360 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 361 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 362 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 363 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 364 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 365 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 366 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 367 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 368 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 369 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 370 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 371 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 372 class=sequence>Q</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 373 class=sequence>S</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 374 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 375 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 376 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 377 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 378 class=sequence>Q</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 379 class=sequence>T</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 380 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 381 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 382 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 383 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 384 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 385 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 386 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 387 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 388 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 389 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 390 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 391 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 392 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 393 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 394 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 395 class=sequence>D</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 396 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 397 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 398 class=sequence>F</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 399 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 400 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 401 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 402 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 403 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 404 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 405 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 406 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 407 class=sequence>E</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 408 class=sequence>G</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 409 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 410 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 411 class=sequence>V</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 412 class=sequence>M</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 413 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 414 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 415 class=sequence>L</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 416 class=sequence>R</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 417 class=sequence>K</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 418 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 419 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 420 class=sequence>A</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 421 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 422 class=sequence>N</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 423 class=sequence>C</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 424 class=sequence>I</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 425 class=sequence>Q</span>
+                         
+                            <span onclick="focus_over_aminoacid(this)" onmouseover="highlight(this)" onmouseout="unhighlight(this)" id = 426 class=sequence>F</span>
+        </font>
+        <br/>
+    </div>
+</div>
+
+
+    <div  id = "feature_viewer" class="row mb-6 ml-4 mr-4 mt-6">
+
+    </div>
+
+
+
+<style>
+    .my-legend .legend-title {
+                    text-align: left;
+                    margin-bottom: 5px;
+                    font-weight: bold;
+                    font-size: 90%;
+                        }
+        .my-legend .legend-scale ul {
+                margin: 0;
+                margin-bottom: 5px;
+                padding: 0;
+                float: left;
+                list-style: none;
+                }
+        .my-legend .legend-scale ul li {
+            font-size: 80%;
+            list-style: none;
+            margin-left: 0;
+            line-height: 18px;
+            margin-bottom: 2px;
+    }
+        div{
+
+            border-radius: 25px;
+
+
+        }
+
+        .my-legend ul.legend-labels li span {
+        display: block;
+        float: left;
+        height: 16px;
+        width: 30px;
+        margin-right: 5px;
+        margin-left: 0;
+        border: 1px solid #999;
+        box-shadow:0px 0px 2px #aaaaaa;
+    }
+        .my-legend .legend-source {
+    font-size: 70%;
+    color: #999;
+    clear: both;
+    }
+        .my-legend a {
+    color: #777;
+    }
+        #dotted li{
+    height:20px; width:20px; border-bottom:4px dashed black;
+    }
+</style>
+<h3> Secondary Structure Alphabet </h3>
+<div class="row" style="margin-left: 5px;">
+        <div class='my-legend'>
+            <div class='legend-scale'>
+                <ul class='legend-labels' style = "color:black;font-size: 18px">
+                    <li><span style='background: #b60909; '></span><b>G: 3-turn helix (3<sub>10</sub>helix)</sub></b></li>
+                      <li><span style='background:#e5792f;'></span><b>H: α-helix</b></li>
+                      <li><span style='background:#d0c828;'></span><b>I: 𝝅-helix (5 - turn helix) </b></li>
+                      <li><span style='background:#a2ff00;'></span><b>T: Hydrogen Bonded Turn</b></li>
+                      <li><span style='background:#09b6a2;'></span><b>B: β-sheet </b></li>
+                      <li><span style='background:#104867;'></span><b>S: Bend</b></li>
+                      <li><span style='background:#a188d0;'></span><b>C: Coil (residues not present in any of the above conformations)</b></li>
+                      <li><span style='background:#949a91;'></span><b>N: Not assigned</b></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<h3>Download PDB Structures & DSSP Secondary Structures: </h3>
+<table id="table" class="table table-bordered" cellspacing="0" width="80%">
+    
+    <tr><td><b>Alpha Fold Pdb Files</b></td><td>&nbsp;&nbsp;
+        <a href="/modomics/media/ALPHA_PDB/AF-P32579-F1-model_v2.pdb"> AF-P32579-F1.pdb &nbsp</a>
+    </td></tr>
+    
+    
+    <tr><td><b>Alpha Fold Pdbx/mmCIF Files</b></td><td>&nbsp;&nbsp;
+        <a href="/modomics/media/ALPHA_mmCIF/AF-P32579-F1-model_v2.cif"> AF-P32579-F1.cif &nbsp</a>
+    </td></tr>
+    
+    
+    <tr><td><b>DSSP Secondary Structures</b></td><td>&nbsp;&nbsp;
+        <a href="/modomics/media/DSSP/AF-P32579-F1-model_v2.dssp"> P32579.dssp &nbsp</a>
+    </td></tr>
+    
+</table>
+<br>
+<br>
+
+
+
+<script type="text/javascript">
+    var sequence = "MYLGRHFLAMTSKALFDTKILKVNPLSIIFSPDAHIDGSLPTITDPETEAALVEAARIIRDTDETVAFPTETVYGLGGSALNDNSVLSIYRAKNRPSDNPLITHVSSIDQLNRKVFNQPHLSGTSLFDNIPSIYRPLISSLWPGPLTILLPVPSSEHSALSKLTTADQPTFAVRIPANPVARALIALSDTPIAAPSANASTRPSPTLASHVYHDLKDKIPIILDGGACKVGVESTVVDGLCNPPTLLRPGGFTYEEIVKLGGEAWSLCKVENKKTVEKGEKVRTPGMKYRHYSPSAKVVLLVPHCEGDGILKGVDRMERLKRLIETELKANSNIKKIAILTSLKLRDSDLQSKIFNEPDFSSKTFIIERLGQSGEEIQTNLFAALRKVDENDKVDLIFVEGINEEGEGLAVMNRLRKAAANNCIQF";
+    var feature_viewer= new FeatureViewer.createFeature(sequence,
+        "#feature_viewer",
+        {
+            showAxis: true,
+            showSequence: true,
+            brushActive: true,
+            toolbar:true,
+            bubbleHelp:true,
+            zoomMax:10
+        });
+    // Add secondary structure information by feature viewer
+    if([{x:25,y:27},{x:132,y:134},{x:262,y:265},{x:309,y:311},{x:358,y:360}] !== null){
+
+        feature_viewer.addFeature({
+            data: [{x:25,y:27},{x:132,y:134},{x:262,y:265},{x:309,y:311},{x:358,y:360}],
+            name: "G",
+            className: "TT-helix",
+            color: "#b60909",
+            type: "multipleRect",
+            filter: "G"
+        });
+    }
+
+    if([{x:34,y:37},{x:46,y:61},{x:83,y:93},{x:108,y:110},{x:135,y:141},{x:162,y:165},{x:179,y:187},{x:208,y:215},{x:254,y:261},{x:316,y:330},{x:347,y:350},{x:374,y:386},{x:408,y:419}] !== null){
+        feature_viewer.addFeature({
+            data: [{x:34,y:37},{x:46,y:61},{x:83,y:93},{x:108,y:110},{x:135,y:141},{x:162,y:165},{x:179,y:187},{x:208,y:215},{x:254,y:261},{x:316,y:330},{x:347,y:350},{x:374,y:386},{x:408,y:419}],
+            name: "H",
+            className: "α-helix",
+            color: "#e5792f",
+            type: "multipleRect",
+            filter: "H"
+        });
+    }
+
+    if([{x:111,y:115},{x:351,y:355},{x:387,y:391}]){
+        feature_viewer.addFeature({
+            data: [{x:111,y:115},{x:351,y:355},{x:387,y:391}],
+            name: "I",
+            className: "𝝅-helix",
+            color: "#d0c828",
+            type: "multipleRect",
+            filter: "I"
+        });
+    }
+    if([{x:32,y:33},{x:80,y:81},{x:94,y:94},{x:97,y:98},{x:120,y:121},{x:126,y:129},{x:155,y:157},{x:166,y:167},{x:188,y:189},{x:200,y:201},{x:216,y:218},{x:266,y:267},{x:278,y:279},{x:285,y:286},{x:306,y:307},{x:312,y:313},{x:332,y:333},{x:356,y:356},{x:361,y:362},{x:406,y:407},{x:420,y:421}] !== null){
+        feature_viewer.addFeature({
+            data: [{x:32,y:33},{x:80,y:81},{x:94,y:94},{x:97,y:98},{x:120,y:121},{x:126,y:129},{x:155,y:157},{x:166,y:167},{x:188,y:189},{x:200,y:201},{x:216,y:218},{x:266,y:267},{x:278,y:279},{x:285,y:286},{x:306,y:307},{x:312,y:313},{x:332,y:333},{x:356,y:356},{x:361,y:362},{x:406,y:407},{x:420,y:421}],
+            name: "T",
+            className: "Hbt",
+            color: "#a2ff00",
+            type: "multipleRect",
+            filter: "T"
+        });
+    }
+    if([{x:196,y:196}] !== null){
+        feature_viewer.addFeature({
+            data: [{x:196,y:196}],
+            name: "B",
+            className: "β-sheet",
+            color: "#09b6a2",
+            type: "multipleRect",
+            filter: "B"
+        });
+    }
+    if([{x:15,y:15},{x:62,y:63},{x:71,y:73},{x:99,y:99},{x:106,y:106},{x:116,y:116},{x:122,y:124},{x:130,y:130},{x:143,y:145},{x:160,y:160},{x:169,y:169},{x:190,y:190},{x:197,y:198},{x:202,y:202},{x:206,y:207},{x:220,y:220},{x:229,y:230},{x:232,y:232},{x:240,y:243},{x:251,y:252},{x:274,y:275},{x:283,y:284},{x:287,y:289},{x:292,y:292},{x:295,y:296},{x:342,y:344},{x:372,y:373},{x:392,y:392},{x:395,y:395},{x:404,y:405}] !== null){
+        feature_viewer.addFeature({
+            data: [{x:15,y:15},{x:62,y:63},{x:71,y:73},{x:99,y:99},{x:106,y:106},{x:116,y:116},{x:122,y:124},{x:130,y:130},{x:143,y:145},{x:160,y:160},{x:169,y:169},{x:190,y:190},{x:197,y:198},{x:202,y:202},{x:206,y:207},{x:220,y:220},{x:229,y:230},{x:232,y:232},{x:240,y:243},{x:251,y:252},{x:274,y:275},{x:283,y:284},{x:287,y:289},{x:292,y:292},{x:295,y:296},{x:342,y:344},{x:372,y:373},{x:392,y:392},{x:395,y:395},{x:404,y:405}],
+            name: "S",
+            className: "bend",
+            color: "#104867",
+            type: "multipleRect",
+            filter: "S"
+        });
+    }
+    if(null !== null){
+        feature_viewer.addFeature({
+            data: null,
+            name: "C",
+            className: "coil",
+            color: "#a188d0",
+            type: "multipleRect",
+            filter: "C"
+        });
+    }
+    if([{x:1,y:14},{x:16,y:18},{x:23,y:24},{x:30,y:31},{x:38,y:41},{x:44,y:45},{x:64,y:65},{x:69,y:70},{x:74,y:74},{x:82,y:82},{x:95,y:96},{x:100,y:101},{x:105,y:105},{x:107,y:107},{x:117,y:119},{x:125,y:125},{x:131,y:131},{x:142,y:142},{x:152,y:154},{x:158,y:159},{x:161,y:161},{x:168,y:168},{x:175,y:178},{x:191,y:191},{x:194,y:195},{x:199,y:199},{x:203,y:205},{x:219,y:219},{x:225,y:228},{x:231,y:231},{x:233,y:234},{x:239,y:239},{x:244,y:244},{x:249,y:250},{x:253,y:253},{x:268,y:268},{x:271,y:273},{x:276,y:277},{x:280,y:282},{x:290,y:291},{x:293,y:294},{x:303,y:305},{x:308,y:308},{x:314,y:315},{x:331,y:331},{x:334,y:335},{x:345,y:346},{x:357,y:357},{x:363,y:363},{x:370,y:371},{x:393,y:394},{x:401,y:403},{x:422,y:422},{x:426,y:426}] !== null){
+        feature_viewer.addFeature({
+            data: [{x:1,y:14},{x:16,y:18},{x:23,y:24},{x:30,y:31},{x:38,y:41},{x:44,y:45},{x:64,y:65},{x:69,y:70},{x:74,y:74},{x:82,y:82},{x:95,y:96},{x:100,y:101},{x:105,y:105},{x:107,y:107},{x:117,y:119},{x:125,y:125},{x:131,y:131},{x:142,y:142},{x:152,y:154},{x:158,y:159},{x:161,y:161},{x:168,y:168},{x:175,y:178},{x:191,y:191},{x:194,y:195},{x:199,y:199},{x:203,y:205},{x:219,y:219},{x:225,y:228},{x:231,y:231},{x:233,y:234},{x:239,y:239},{x:244,y:244},{x:249,y:250},{x:253,y:253},{x:268,y:268},{x:271,y:273},{x:276,y:277},{x:280,y:282},{x:290,y:291},{x:293,y:294},{x:303,y:305},{x:308,y:308},{x:314,y:315},{x:331,y:331},{x:334,y:335},{x:345,y:346},{x:357,y:357},{x:363,y:363},{x:370,y:371},{x:393,y:394},{x:401,y:403},{x:422,y:422},{x:426,y:426}],
+            name: "N",
+            className: "not-assigned",
+            color: "#949a91",
+            type: "multipleRect",
+            filter: "N"
+        });
+    }
+
+
+    //Create plugin instance
+    var viewerInstance = new PDBeMolstarPlugin();
+    //Set options (Checkout available options list in the documentation)
+
+
+    function highlight(x) {
+        x.style.backgroundColor="red"
+        var value = Math.floor(x.id)
+        console.log(typeof number)
+        viewerInstance.visual.highlight(
+            {
+                data:[
+                    {
+                        struct_asym_id:'A',
+                        start_residue_number:value,
+                        end_residue_number:value
+                    }
+                ],
+                color:{
+                    r:255,
+                    g:255,
+                    b:0
+                }
+            }
+        )
+    }
+    function highlight_range(x) {
+        x.style.backgroundColor="red"
+        var value = Math.floor(x.id)
+        console.log(typeof number)
+        viewerInstance.visual.highlight(
+            {
+                data:[
+                    {
+                        struct_asym_id:'A',
+                        start_residue_number:value,
+                        end_residue_number:value
+                    }
+                ],
+                color:{
+                    r:255,
+                    g:255,
+                    b:0
+                }
+            }
+        )
+    }
+
+    function unhighlight(x) {
+        x.style.backgroundColor="transparent"
+        viewerInstance.visual.clearHighlight()
+    }
+    function clearAllHighlights() {
+        // Select all span elements with the class sequence
+        document.querySelectorAll('span.sequence').forEach(span => {
+        // Call the existing unhighlight function on each span
+                unhighlight(span);
+        });};
+    function focus_over_aminoacid(x){
+        var value = Math.floor(x.id)
+        viewerInstance.visual.select({
+            data:[
+                {
+                    struct_asym_id:'A',
+                    start_residue_number: value,
+                    end_residue_number:value,
+                    color:{
+                        r:255,
+                        g:255,
+                        b:0
+                    },
+                    focus:true,
+                    sideChain:true
+                }
+            ]
+            }
+
+        )
+    }
+    var options = {
+        customData: {
+            url: '/modomics/media/ALPHA_mmCIF/AF-P32579-F1-model_v2.cif',
+            format: 'cif'
+        },
+        alphafoldView: true,
+        bgColor: {r:255, g:255, b:255},
+        hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo']
+    }
+
+    //Get element from HTML/Template to place the viewer
+    var viewerContainer = document.getElementById('alpha_Viewer');
+
+    //Call render method to display the 3D view
+    viewerInstance.render(viewerContainer, options);
+    function focusOnRange(start, end) {
+                // Unhighlight all spans
+                document.querySelectorAll('.sequence').forEach(span => {
+                // Convert the id to a number
+                let idValue = parseInt(span.id, 10);
+                // Check if the id is within the specified range
+                if (idValue >= start && idValue <= end) {
+                // Highlight if within range
+                    highlight(span);
+                } else {
+                // Unhighlight if outside range
+                    unhighlight(span);
+                    }
+                });}
+
+    feature_viewer.onFeatureSelected(function (d) {
+            const start = Math.floor(d.detail.start);
+            const end = Math.floor(d.detail.end);
+            focusOnRange(start, end)
+            viewerInstance.visual.select({
+                data: [
+                    {
+                        struct_asym_id: 'A',
+                        start_residue_number: start,
+                        end_residue_number: end,
+                        color :{
+                            r:255,
+                            g:255,
+                            b:0
+                        },
+                        focus:true,
+                        sideChain:true
+                    }
+                ]
+            });
+
+
+        });
+
+    document.addEventListener('click', function(event) {
+        // Check if the click target was a rect element or a span with the class sequence
+        if (!event.target.closest('rect, .sequence') || event.target.tagName === 'SPAN') {
+            // If the click was outside these elements, clear all highlights
+            clearAllHighlights()
+        }
+        });
+    var sequence_wrapper = $('.msp-sequence-select')
+    sequence_wrapper.remove();
+    var sequence_dom = $('.msp-layout-region.msp-layout-top')
+    sequence_dom.remove();
+
+    /*style="width: 1698.4px; height: 798.4px;border-radius:50%;border-color:transparent"*/
+    var msp_plugin = $('.msp-plugin');
+        msp_plugin.css({
+        'background-color':'transparent',
+        'border-color':'transparent'});
+
+    var high_grade_dom = $('.msp-plugin-content.msp-layout-standard.msp-layout-standard-outside').css({'border-radius':'50%',
+        'background-color':'transparent',
+        'border-color':'transparent'});
+    var lower_grad_dom = $('.msp-viewport').css({'border-radius':'50%',
+        'background-color':'transparent',
+        'border-color':'transparent'});
+    var view_port = $('.msp-viewport-host3d').css({'border-radius':'50%',
+        'background-color':'transparent',
+        'border-color':'transparent'});
+    var canvas = view_port.children('canvas');
+    canvas.css({
+        'background-color':'transparent',
+        'border-color':'transparent',
+
+        });
+    var right_structure = $('.msp-layout-region msp-layout-right')
+    right_structure.remove();
+    var left_structure = $('.msp-layout-region msp-layout-left')
+    left_structure.remove();
+
+
+
+
+
+    //Handling the dom generated by the Mol* plugin
+
+
+
+
+
+</script>
+
+
+<br>
+<br>
+<br>
+
+<h3>Publications:</h3>
+<table id="tablepap" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Authors</th>
+        <th>Journal</th>
+        <th>Details</th>
+        <th><nobr>PubMed Id</nobr></th>
+        <th><nobr>DOI</nobr></th>
+    </tr>
+    </thead>
+    <tbody>
+    
+    <tr>
+        <td>Isolation and characterization of SUA5, a novel gene required for normal growth in Saccharomyces cerevisiae.</td>
+        <td>Na JG, Pinto I, Hampsey M</td>
+        <td>Genetics</td>
+        <td>
+            <a href="/modomics/publications/164/" title="Show details">[details]</a>
+        </td>
+        <td>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/1325384/" title="See on PubMed">1325384</a>
+            
+        </td>
+        <td>
+             -
+            
+        </td>
+    </tr>
+    
+    <tr>
+        <td>The universal YrdC/Sua5 family is required for the formation of threonylcarbamoyladenosine in tRNA.</td>
+        <td>El Yacoubi B, Lyons B, Cruz Y, Reddy R, Nordin B, Agnelli F, Williamson JR, Schimmel P, Swairjo MA, de Crecy-Lagard V</td>
+        <td>Nucleic Acids Res</td>
+        <td>
+            <a href="/modomics/publications/522/" title="Show details">[details]</a>
+        </td>
+        <td>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/19287007/" title="See on PubMed">19287007</a>
+            
+        </td>
+        <td>
+             -
+            
+        </td>
+    </tr>
+    
+    <tr>
+        <td>The Sua5 protein is essential for normal translational regulation in yeast.</td>
+        <td>Lin CA, Ellis SR, True HL</td>
+        <td>Mol Cell Biol</td>
+        <td>
+            <a href="/modomics/publications/523/" title="Show details">[details]</a>
+        </td>
+        <td>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/19884342/" title="See on PubMed">19884342</a>
+            
+        </td>
+        <td>
+             -
+            
+        </td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<script>
+    $(document).ready( function () {
+        $('#tablepap').DataTable({
+
+
+            "fixedHeader": {
+                header: true,
+            },
+
+            "fixedColumns": {
+                leftColumns: 1,
+            },
+            "processing": true,
+            "scrollX": true,
+            "scrollY": "400px",
+            "scrollCollapse": true,
+            "paging": false,
+
+            "dom": 'Bfrtip',
+            "buttons": [
+                'csv', 'print',
+            ],
+
+
+        });
+    } );
+</script>
+
+
+
+
+
+
+</div>
+
+<br>
+<button id="scrolltop"  onclick="topFunction()">Scroll Up</button>
+<script type="text/javascript" charset="utf-8">
+
+        var mybutton = document.getElementById("scrolltop");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function() {scrollFunction()};
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+
+</script>
+
+ 
+
+ 
+</body>
+</html>

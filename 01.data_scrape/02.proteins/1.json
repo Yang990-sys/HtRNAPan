@@ -1,0 +1,47 @@
+{
+  "ID": "1",
+  "Sequence": "MYLGRHFLAMTSKALFDTKILKVNPLSIIFSPDAHIDGSLPTITDPETEAALVEAARIIRDTDETVAFPTETVYGLGGSALNDNSVLSIYRAKNRPSDNPLITHVSSIDQLNRKVFNQPHLSGTSLFDNIPSIYRPLISSLWPGPLTILLPVPSSEHSALSKLTTADQPTFAVRIPANPVARALIALSDTPIAAPSANASTRPSPTLASHVYHDLKDKIPIILDGGACKVGVESTVVDGLCNPPTLLRPGGFTYEEIVKLGGEAWSLCKVENKKTVEKGEKVRTPGMKYRHYSPSAKVVLLVPHCEGDGILKGVDRMERLKRLIETELKANSNIKKIAILTSLKLRDSDLQSKIFNEPDFSSKTFIIERLGQSGEEIQTNLFAALRKVDENDKVDLIFVEGINEEGEGLAVMNRLRKAAANNCIQF",
+  "Full name:": "tRNA threonylcarbamoyladenosine biosynthesis protein SUA5",
+  "UniProt:": "P32579",
+  "Structures:": "",
+  "Enzyme type:": "threonylcarbamoyladenosine synthetase",
+  "Position of modification - modification:": "t:37 - t6A",
+  "Publications:": [
+    {
+      "Title": "Isolation and characterization of SUA5, a novel gene required for normal growth in Saccharomyces cerevisiae.",
+      "Authors": "Na JG, Pinto I, Hampsey M",
+      "Journal": "Genetics",
+      "Details": {
+        "[details]": "/modomics/publications/164/"
+      },
+      "PubMed Id": {
+        "1325384": "https://pubmed.ncbi.nlm.nih.gov/1325384/"
+      },
+      "DOI": "-"
+    },
+    {
+      "Title": "The universal YrdC/Sua5 family is required for the formation of threonylcarbamoyladenosine in tRNA.",
+      "Authors": "El Yacoubi B, Lyons B, Cruz Y, Reddy R, Nordin B, Agnelli F, Williamson JR, Schimmel P, Swairjo MA, de Crecy-Lagard V",
+      "Journal": "Nucleic Acids Res",
+      "Details": {
+        "[details]": "/modomics/publications/522/"
+      },
+      "PubMed Id": {
+        "19287007": "https://pubmed.ncbi.nlm.nih.gov/19287007/"
+      },
+      "DOI": "-"
+    },
+    {
+      "Title": "The Sua5 protein is essential for normal translational regulation in yeast.",
+      "Authors": "Lin CA, Ellis SR, True HL",
+      "Journal": "Mol Cell Biol",
+      "Details": {
+        "[details]": "/modomics/publications/523/"
+      },
+      "PubMed Id": {
+        "19884342": "https://pubmed.ncbi.nlm.nih.gov/19884342/"
+      },
+      "DOI": "-"
+    }
+  ]
+}

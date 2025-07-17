@@ -1,0 +1,19 @@
+{
+  "Summary - Full name": "5-formyluridine",
+  "Summary - Short name": "f5U",
+  "Summary - MODOMICS code": "71U",
+  "Chemical information - Sum formula": "C10H12N2O7",
+  "Chemical information - Search the molecule in external databases": "https://www.ebi.ac.uk/chembl/g/#search_results/compounds/query=MZBPLEJIMYNQQI-JXOAFFINSA-N,https://chemagora.jrc.ec.europa.eu/chemagora/inchikey/MZBPLEJIMYNQQI-JXOAFFINSA-N,https://www.ebi.ac.uk/chembl/g/#search_results/compounds/query=MZBPLEJIMYNQQI-JXOAFFINSA-N,https://www.ncbi.nlm.nih.gov/pccompound/?db=pccompound&term=MZBPLEJIMYNQQI-JXOAFFINSA-N[InChIKey],http://ligand-expo.rcsb.org/pyapps/ldHandler.py?formid=cc-index-search&target=MZBPLEJIMYNQQI-JXOAFFINSA-N&operation=inchikey-substring,http://www.chemspider.com/Search.aspx?q=InChIKey=MZBPLEJIMYNQQI-JXOAFFINSA-N,https://patentscope.wipo.int/search/en/result.jsf?inchikey=MZBPLEJIMYNQQI-JXOAFFINSA-N",
+  "Chemical information - SMILES": "OC[C@@H]1[C@@H](O)[C@@H](O)[C@H](n2c(=O)[nH]c(=O)c(C=O)c2)O1",
+  "Download Structures - 2D": "https://iimcb.genesilico.pl//modomics/media/mod_images/f5U.png,https://iimcb.genesilico.pl//modomics/media/2d_structures/1_2D.mol,https://iimcb.genesilico.pl//modomics/media/2d_structures/1_2D.mol2,https://iimcb.genesilico.pl//modomics/media/2d_structures/1_2D.sdf,https://iimcb.genesilico.pl//modomics/media/2d_structures/1_2D.pdb,https://iimcb.genesilico.pl//modomics/media/2d_structures/1_2D.smi",
+  "Download Structures - 3D": "https://iimcb.genesilico.pl//modomics/media/3d_structures/1_3D.mol,https://iimcb.genesilico.pl//modomics/media/3d_structures/1_3D.mol2,https://iimcb.genesilico.pl//modomics/media/3d_structures/1_3D.sdf,https://iimcb.genesilico.pl//modomics/media/3d_structures/1_3D.pdb",
+  "LC-MS Information - Monoisotopic mass": "272.0645",
+  "LC-MS Information - Average mass": "272.211",
+  "LC-MS Information - [M+H]+": "not available",
+  "LC-MS Information - Product ions": "not available",
+  "Publications:": [],
+  "Structural formula image URL": "https://iimcb.genesilico.pl//modomics//modomics/media/mod_images/f5U.png",
+  "Summary - IUPAC name": "",
+  "Summary - Synonyms": "",
+  "Summary - Enzymes": ""
+}
