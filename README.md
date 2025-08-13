@@ -4,7 +4,7 @@
   HtRNAPan, an integrated platform for comprehensive landscape analysis and functional annotation of herbal tRNAs. The database features: 1) Over 514,119 tRNAs and over 33,417,735 tsRNAs from 315 medicinal plant species. 2) Annotation of over100 tRNA modification enzymes across all species. 3) tRNA sequences with predicted modification types, positions, probabilities. 4) RNA modification isozyme profiles. 5) tsRNA sequences and regulatory roles in cross-kingdom. Users can intuitively explore tRNA panorama data via a user-friendly interface.
 
 
-**cite from:**  (A novel panorama database for comprehensive analysis and functional annotation of herbal tRNAs)[www.biorxiv.org]
+**cite from:**  [A novel panorama database for comprehensive analysis and functional annotation of herbal tRNAs](www.biorxiv.org/)
 
 
 
