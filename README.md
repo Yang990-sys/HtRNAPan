@@ -9,6 +9,7 @@
 
 
 ## Pipeline Workflow
+![pipline](img/pipline.png)
 
 ### 1. Data Download and Cleaning 
 
@@ -18,7 +19,6 @@ Retrieve datasets from the following sources:
 
 - [Modomics](https://iimcb.genesilico.pl/modomics/)
 
-- [HerbalRDB]()
 
   For Modomics data, we downloaded the original HTML files and performed data scraping using the Python script in the `01.data_scrape` directory as follows.
 
