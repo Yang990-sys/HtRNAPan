@@ -67,7 +67,10 @@ Use blastn to align the miRNA-Seq data to the tRNA sequences, and then use a scr
 
 ```
 makeblastdb -in tRNA.fa -dbtype nucl -out tRNA_db
-blastn -query miRNA_R1.fasta -db tRNA_db -out R1_vs_tRNA.blastout -outfmt 6    -evalue 1e-5
-blastn -query miRNA_R2.fasta -db tRNA_db -out R1_vs_tRNA.blastout -outfmt 6    -evalue 1e-5 
+blastn -query miRNA_R1.fasta -db tRNA_db -out R1_vs_tRNA.blastout -outfmt 6  -a 32  -evalue 1e-5
+blastn -query miRNA_R2.fasta -db tRNA_db -out R1_vs_tRNA.blastout -outfmt 6  -a 32  -evalue 1e-5 
 perl 04.tsRNA/tsRNA-pipeline.pl miRNA tRNA.fa
+
+RNAhybrid -c -p 0.05 -s 3utr_human -t 3utr_sequences.fa -f 2,7 -e -30 -b 1  -q tsRNA.fa >out
+
 ``` 
