@@ -63,4 +63,11 @@ grep -v '^#' miniprot.gff|gffread -  -g ${genome} -y ${species}.proteins.fa
 ```
  
 ### 6.  tsRNA Mining and Target Gene Prediction
- 
+Use blastn to align the miRNA-Seq data to the tRNA sequences, and then use a script to organize the tsRNA data.
+
+```
+makeblastdb -in tRNA.fa -dbtype nucl -out tRNA_db
+blastn -query miRNA_R1.fasta -db tRNA_db -out R1_vs_tRNA.blastout -outfmt 6    -evalue 1e-5
+blastn -query miRNA_R2.fasta -db tRNA_db -out R1_vs_tRNA.blastout -outfmt 6    -evalue 1e-5 
+perl 04.tsRNA/tsRNA-pipeline.pl miRNA tRNA.fa
+``` 
