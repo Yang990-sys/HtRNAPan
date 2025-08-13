@@ -1,8 +1,8 @@
 # Data Processing Pipeline for Small RNA Analysis in HtRNAPan
 
 ## Introduction 
+  HtRNAPan, an integrated platform for comprehensive landscape analysis and functional annotation of herbal tRNAs. The database features: 1) Over 514,119 tRNAs and over 33,417,735 tsRNAs from 315 medicinal plant species. 2) Annotation of over100 tRNA modification enzymes across all species. 3) tRNA sequences with predicted modification types, positions, probabilities. 4) RNA modification isozyme profiles. 5) tsRNA sequences and regulatory roles in cross-kingdom. Users can intuitively explore tRNA panorama data via a user-friendly interface.
 
-【网站介绍】
 
 **cite from:**  (文章名称)[www.biorxiv.org]
 
