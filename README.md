@@ -29,29 +29,38 @@ Retrieve datasets from the following sources:
   #modification 
   python 01.data_scrape/02.proteins/run.py -i 01.data_scrape/02.proteins/test/1.html -o ./1.json
   ```
-  For 
   
 ### 2.  tRNA Prediction
+
   Use `tRNAscan-SE` to predict tRNA from  Genomes.
   
-  ```
+  ```sh
   tRNAscan-SE  -E -o ${genome}.tRNA -f ${genome}.structure --thread 16 ${genome} 
   ```
 
 ### 3.  tRNA 2D and 3D Structure Prediction
 
-​	Predict 2D and 3D Structures Using the [VfoldPipeline_alone](https://rna.physics.missouri.edu/vfoldPipeline/index.html).
+Predict 2D and 3D Structures Using the [VfoldPipeline_alone](https://rna.physics.missouri.edu/vfoldPipeline/index.html).
 
 ### 4.  tRNA Modification Prediction
 
-<200b>  After downloading modified and unmodified tRNA sequences from Modomics, first use a script to extract the positions and types of modifications, then classify them according to amino acid types. Next, perform data alignment between the sequence to be predicted and sequences of the same amino acid type, and extract the modification ratios.
-   ```
+ After downloading modified and unmodified tRNA sequences from Modomics, first use a script to extract the positions and types of modifications, then classify them according to amino acid types. Next, perform data alignment between the sequence to be predicted and sequences of the same amino acid type, and extract the modification ratios.
+   ```sh
+   #extract the positions and types of modifications from sequences
+   python 03.tRNA_mod/seq2mod.py 
+
+   #align tRNA sequences and extract modification percentage
+   muscle -align all.fa -output aln.afa   
+   python 03.tRNA_mod/seq2modpos.py  -s  aln.afa -m modification_sites.tsv -min 5 -o out -minP 0.2
    ```
 
 ### 5.  Analysis of Modification-Related Isozymes
 
-​	Use `minimprot` to 
-
+Predict modified-related isozymes using `miniprot`.
+```sh
+miniprot --gff -Iut50 ${genome} ${pep} > miniprot.gff
+grep -v '^#' miniprot.gff|gffread -  -g ${genome} -y ${species}.proteins.fa
+```
+ 
 ### 6.  tsRNA Mining and Target Gene Prediction
-
-<200b>  
+ 
