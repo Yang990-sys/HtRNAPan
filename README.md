@@ -9,7 +9,7 @@ HtRNAPan (Herbal tRNA Panorama), an integrated platform dedicated to the panoram
 
 
 ## Pipeline Workflow
-![pipline](img/pipline_final.png)
+![pipline](img/pipline.png)
 
 ### 1. Data Download and Cleaning 
 
