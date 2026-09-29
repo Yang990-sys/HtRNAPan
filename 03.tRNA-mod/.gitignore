@@ -1,0 +1,21 @@
+# 数据文件（太大不上传，用 example/ 下的示例）
+*.fa
+*.fasta
+*.afa
+*.tsv
+!example/*.fa
+!example/*.tsv
+!aalist
+
+# 结果目录
+results/
+
+# Python 缓存
+__pycache__/
+*.pyc
+.mod_cache.pkl
+
+# 系统文件
+.DS_Store
+*.swp
+*.swo

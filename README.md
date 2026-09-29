@@ -46,12 +46,11 @@ Predict 2D and 3D Structures Using the [VfoldPipeline_alone](https://rna.physics
 
  After downloading modified and unmodified tRNA sequences from Modomics, first use a script to extract the positions and types of modifications, then classify them according to amino acid types. Next, perform data alignment between the sequence to be predicted and sequences of the same amino acid type, and extract the modification ratios.
    ```sh
-   #extract the positions and types of modifications from sequences
-   python 03.tRNA_mod/seq2mod.py 
+   # 完整流程
+   bash 03.tRNA-mod/pipeline.sh
 
-   #align tRNA sequences and extract modification percentage
-   muscle -align all.fa -output aln.afa   
-   python 03.tRNA_mod/seq2modpos.py  -s  aln.afa -m modification_sites.tsv -min 5 -o out -minP 0.2
+   # 只处理某个氨基酸
+   bash 03.tRNA-mod/pipeline.sh --aa Gly
    ```
 
 ### 5.  Analysis of Modification-Related Isozymes
